@@ -1,0 +1,47 @@
+
+services:
+  # Public Streamlit application
+  - type: web
+    name: pocketledger-web
+    runtime: docker
+    plan: starter
+    region: oregon
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /_stcore/health
+    autoDeploy: true
+
+    envVars:
+      - key: PYTHONUNBUFFERED
+        value: "1"
+
+      - key: OLLAMA_MODEL
+        value: qwen2.5:3b
+
+      - key: OLLAMA_HOST
+        fromService:
+          type: pserv
+          name: pocketledger-ollama
+          property: hostport
+
+  # Private Ollama model server
+  - type: pserv
+    name: pocketledger-ollama
+    runtime: docker
+    plan: starter
+    region: oregon
+    dockerfilePath: ./ollama/Dockerfile
+    dockerContext: ./ollama
+    autoDeploy: true
+
+    envVars:
+      - key: OLLAMA_MODEL
+        value: qwen2.5:3b
+
+      - key: OLLAMA_HOST
+        value: 0.0.0.0:11434
+
+    disk:
+      name: ollama-model-data
+      mountPath: /root/.ollama
+      sizeGB: 10

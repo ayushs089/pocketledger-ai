@@ -1,0 +1,6 @@
+streamlit>=1.40,<2
+ollama>=0.4,<1
+pdfplumber>=0.11,<1
+pytesseract>=0.3.13,<1
+Pillow>=10,<13
+pandas>=2.2,<4
